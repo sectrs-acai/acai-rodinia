@@ -4,3 +4,9 @@
 *.cpu
 *.gpu
 *.out
+/build/
+/data.tmp/
+/rodinia_3.1.tar.bz2
+/rodinia_3.1/
+/data
+/tmp/
