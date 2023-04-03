@@ -103,7 +103,7 @@ int main(int argc, char *argv []){
     CUresult res;
     int rt;
 
-    int verbose = 0;
+    int verbose = 1;
     int cur_arg = 1;
 
     usage(argc, argv);

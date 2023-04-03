@@ -14,4 +14,5 @@ CCFILES		:= gaussian_cuda.c
 # init C flags (more options will be added)
 CFLAGS		:= -lm
 
-include ../util/nvidia.mk
+# include ../util/nvidia.mk
+include ../util/gdev_fvp.mk
