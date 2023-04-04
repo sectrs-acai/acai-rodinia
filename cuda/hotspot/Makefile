@@ -15,5 +15,4 @@ CCFILES		:= hotspot_cuda.c
 CFLAGS		:= -lm
 # use g++ instead of gcc
 
-include ../util/nvidia.mk
-
+include ../util/gdev_fvp.mk

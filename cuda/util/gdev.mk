@@ -1,5 +1,5 @@
 ifeq ($(CC),)
-	CC = gcc
+	CC=$(CROSS_COMPILE)gcc
 endif
 NVCC = nvcc
 
@@ -18,8 +18,13 @@ CFLAGS += -I$(CUDA_TOP_DIR)/util \
 CCFILES += $(CUDA_TOP_DIR)/util/util.c
 
 .PHONY: all clean
-all:
+
+all: gcc
+
+nvcc:
 	$(NVCC) -o $(EXECUTABLE).cubin $(NVCCFLAGS) $(CUFILES)
+
+gcc:
 	$(CC) -o $(EXECUTABLE) $(CCFILES) $(CFLAGS)
 
 clean:

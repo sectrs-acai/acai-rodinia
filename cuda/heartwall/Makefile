@@ -14,5 +14,4 @@ CCFILES		:= heartwall_cuda.c ./AVI/avilib.c ./AVI/avimod.c
 # init C flags (more options will be added)
 CFLAGS		:= -lm -I./AVI
 
-include ../util/nvidia.mk
-
+include ../util/gdev_fvp.mk

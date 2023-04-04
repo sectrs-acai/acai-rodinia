@@ -14,4 +14,4 @@ CCFILES		:= srad_cuda.c
 # init C flags (more options will be added)
 CFLAGS		:= -lm
 
-include $(CUDA_TOP_DIR)/util/nvidia.mk
+include $(CUDA_TOP_DIR)/util/gdev_fvp.mk

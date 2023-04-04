@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ -z "$DATA_DIR" ]
 then
-    export DATA_DIR=/home/hyu/gpu-rodinia/data
+    export DATA_DIR=../../data
 fi
 
 ./heartwall ${DATA_DIR}/heartwall/test.avi 100

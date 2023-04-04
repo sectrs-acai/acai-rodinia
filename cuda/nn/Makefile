@@ -14,9 +14,9 @@ CCFILES		:= nn_cuda.c
 # init C flags (more options will be added)
 CFLAGS		:= -lm
 # use g++ instead of gcc
-CC		:= g++ 
+CC		:= aarch64-none-linux-gnu-g++
 
-include ../util/nvidia.mk
+include ../util/gdev_fvp.mk
 
 hurricane_gen : hurricane_gen.c
 	$(CC) -o $@ $< -lm

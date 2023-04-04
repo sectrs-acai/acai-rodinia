@@ -15,8 +15,8 @@ EXECUTABLE      := lud_base
 SOURCES         := lud.c lud_base.c ../common/common.c 
 
 # ------------  compiler  ------------------------------------------------------
-CC              := gcc
-CXX             := g++
+CC              := $(CROSS_COMPILE)gcc
+CXX             := $(CROSS_COMPILE)g++
 
 # ------------  compiler flags  ------------------------------------------------
 DEBUG_CFLAGS    := -Wall -O0 -g

@@ -1,7 +1,5 @@
-ifeq ($(CC),)
-	CC =$(CROSS_COMPILE)gcc
-
-endif
+CROSS_COMPILE ?= aarch64-none-linux-gnu-
+CC ?= $(CROSS_COMPILE)gcc
 NVCC = nvcc
 
 NVCCFLAGS += -O3 \
@@ -18,7 +16,8 @@ CFLAGS += -I$(CUDA_TOP_DIR)/util \
 CCFILES += $(CUDA_TOP_DIR)/util/util.c
 
 .PHONY: all clean
-all: nvcc
+
+all: gcc
 
 gcc:
 	$(CC) -o $(EXECUTABLE) $(CCFILES) $(CFLAGS)

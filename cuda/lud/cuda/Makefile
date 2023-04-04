@@ -14,4 +14,4 @@ CCFILES		:= lud_cuda.c ../common/common.c
 # init C flags (more options will be added)
 CFLAGS		:= -I../common -lm
 
-include $(CUDA_TOP_DIR)/util/nvidia.mk
+include $(CUDA_TOP_DIR)/util/gdev_fvp.mk

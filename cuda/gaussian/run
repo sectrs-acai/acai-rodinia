@@ -1,2 +1,2 @@
 # ./gaussian -q ../../data/gaussian/matrix208.txt
-./gaussian -s 1024 -q
+./gaussian -s 1675 -q
