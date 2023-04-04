@@ -1,0 +1,2 @@
+# ./bfs ./graph65536.txt
+./bfs ./graph4096.txt
