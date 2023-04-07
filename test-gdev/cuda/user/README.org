@@ -1,0 +1,19 @@
+#+title: Compile for FVP
+
+#+begin_src
+LIBS	+= -L$(STAGING_DIR)/usr/local/gdev/lib64/ -lucuda -lgdev
+CFLAGS	+= -I$(STAGING_DIR)/usr/local/gdev/include
+
+all: gcc
+
+nvcc:
+	$(NVCC) -o fmadd_gpu.cubin fmadd_gpu.cu
+
+gcc:
+	$(CC) -o $(TARGET) $(CFLAGS) main.c fmadd.c $(LIBS)
+#+end_src
+
+
+- add buildroot prefix staging_dir to load/ include path
+- source buildroot sdk
+- split nvcc and cc goals: for nvcc we need old gcc-4.8, for cc we need cross compiler
