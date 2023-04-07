@@ -11,3 +11,4 @@
 /data
 /tmp/
 /.idea/
+/cuda/backprop/backprop
