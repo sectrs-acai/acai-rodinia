@@ -1,7 +1,6 @@
 #!/bin/zsh
 #
 set -euo pipefail
-SCRIPT_DIR=${0:a:h}
 
 b_fvp=( \
     "backprop" \
@@ -46,6 +45,7 @@ b_fvp_ok=("backprop" \
 BENCH_OUT_DIR=/tmp/benchmark-single
 
 function do_run_fvp_single {
+    SCRIPT_DIR=${0:a:h}
     TS=$(date +"%Y-%m-%d_%H-%M-%S")
     DIR=$BENCH_OUT_DIR/$TS
     mkdir -p $DIR
@@ -62,6 +62,7 @@ function do_run_fvp_single {
 }
 
 function do_nvcc {
+    SCRIPT_DIR=${0:a:h}
     set +x
     for b in ${b_fvp[@]}; do
         cd $SCRIPT_DIR/$b && make nvcc && cd $SCRIPT_DIR
@@ -72,9 +73,22 @@ function do_nvcc {
     done
 }
 
+function do_gcc {
+    # must be executed with bash
+    HERE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+    source $HERE_DIR/../../../../scripts/env-aarch64.sh
+    set +x
+    for b in ${b_fvp[@]}; do
+        cd $HERE_DIR/$b && make gcc && cd $HERE_DIR
+    done
+}
+
 case "$1" in
     nvcc)
         do_nvcc
+    ;;
+    gcc)
+        do_gcc
     ;;
     fvp-single)
         do_run_fvp_single
