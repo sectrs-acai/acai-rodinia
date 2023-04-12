@@ -3,6 +3,7 @@
 
 #include <cuda.h>
 #include <sys/time.h>
+#include "cca_benchmark.h"
 
 CUresult cuda_driver_api_init(CUcontext *pctx, CUmodule *pmod, const char *f);
 CUresult cuda_driver_api_exit(CUcontext ctx, CUmodule mod);

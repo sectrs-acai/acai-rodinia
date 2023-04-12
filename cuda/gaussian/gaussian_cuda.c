@@ -18,10 +18,10 @@
 #include <math.h>
 #include <string.h>
 #include <sys/time.h>
-
 #include <cuda.h>
 
 #include "util.h"
+#include "cca_benchmark.h"
 
 #define MAXBLOCKSIZE 512
 
@@ -105,6 +105,7 @@ int main(int argc, char *argv []){
 
     int verbose = 1;
     int cur_arg = 1;
+    CCA_BENCHMARK_INIT;
 
     usage(argc, argv);
     if (!strcmp(argv[1], "-s"))
@@ -129,6 +130,8 @@ int main(int argc, char *argv []){
     /* call our common CUDA initialization utility function. */
     probe_time_start(&ts_total);
     probe_time_start(&ts_init);
+    CCA_BENCHMARK_START;
+    CCA_INIT;
 
     res = cuda_driver_api_init(&ctx, &mod, "./gaussian.cubin");
     if (res != CUDA_SUCCESS) {
@@ -136,6 +139,7 @@ int main(int argc, char *argv []){
         return -1;
     }
     init_time = probe_time_end(&ts_init);
+    CCA_INIT_STOP;
 
     rt = ForwardSub(mod);
     if (rt < 0) return -1;
@@ -147,6 +151,8 @@ int main(int argc, char *argv []){
     }
     close_time += probe_time_end(&ts_close);
 	total_time = probe_time_end(&ts_total);
+    CCA_CLOSE_STOP;
+    CCA_BENCHMARK_STOP;
 
     BackSub();
     if (verbose) {
@@ -337,6 +343,7 @@ int ForwardSub(CUmodule mod)
     CUresult res;
 
     probe_time_start(&ts_memalloc);
+    CCA_MEMALLOC;
 
     /* Allocate device memory */
     res = cuMemAlloc(&m_cuda, sizeof(float) * Size * Size);
@@ -358,7 +365,10 @@ int ForwardSub(CUmodule mod)
     }
 
     mem_alloc_time = probe_time_end(&ts_memalloc);
+    CCA_MEMALLOC_STOP;
+    CCA_H_TO_D;
     probe_time_start(&ts_h2d);
+
 
     /* Copy data from main memory to device memory */
     res = cuMemcpyHtoD(a_cuda, a, sizeof(float) * Size * Size);
@@ -380,6 +390,8 @@ int ForwardSub(CUmodule mod)
     }
 
     h2d_time = probe_time_end(&ts_h2d);
+    CCA_H_TO_D_STOP;
+    CCA_EXEC;
 
     //int block_size, grid_size;
     //block_size = MAXBLOCKSIZE;
@@ -390,8 +402,10 @@ int ForwardSub(CUmodule mod)
     blockSize2d = 4;
     gridSize2d = (Size/blockSize2d) + (!(Size%blockSize2d?0:1)); 
 
+
     // run kernels
     probe_time_start(&ts_kernel);
+
 
     for (t=0; t<(Size-1); t++) {
         gaussian_launch(mod, gridSize2d, gridSize2d, blockSize2d, blockSize2d, m_cuda, a_cuda, Size, t);
@@ -402,6 +416,8 @@ int ForwardSub(CUmodule mod)
 
     cuCtxSynchronize();
     kernel_time = probe_time_end(&ts_kernel);
+    CCA_EXEC_STOP;
+    CCA_D_TO_H;
 
     /* Copy data from device memory to main memory */
     probe_time_start(&ts_d2h);
@@ -423,6 +439,8 @@ int ForwardSub(CUmodule mod)
 
     d2h_time += probe_time_end(&ts_d2h);
     probe_time_start(&ts_close);
+    CCA_D_TO_H_STOP;
+    CCA_CLOSE;
 
     cuMemFree(m_cuda);
     cuMemFree(a_cuda);

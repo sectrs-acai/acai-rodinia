@@ -1,1 +1,3 @@
+set +x
+echo "srad2-2048-2048" > /mnt/host/fvp-trace || true
 ./srad2 2048 2048 0 127 0 127 0.5 2

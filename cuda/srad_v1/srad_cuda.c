@@ -177,6 +177,7 @@ CUresult compress_launch
 
 int main(int argc, char *argv [])
 {
+	CCA_BENCHMARK_INIT;
 	/* time */
     struct timestamp ts_init, ts_total, ts_memalloc, ts_h2d, ts_d2h, ts_kernel, ts_close;
     float init_time = 0, mem_alloc_time = 0, h2d_time = 0, kernel_time = 0,
@@ -330,7 +331,9 @@ int main(int argc, char *argv [])
 	 ******************************************************/
 
 	/* call our common CUDA initialization utility function. */
-    probe_time_start(&ts_total);
+	CCA_BENCHMARK_START;
+	CCA_INIT;
+	probe_time_start(&ts_total);
     probe_time_start(&ts_init);
 
 	res = cuda_driver_api_init(&ctx, &mod, "./srad.cubin");
@@ -340,6 +343,8 @@ int main(int argc, char *argv [])
 	}
 
     init_time = probe_time_end(&ts_init);
+	CCA_INIT_STOP;
+	CCA_MEMALLOC;
     probe_time_start(&ts_memalloc);
 
 	/* allocate memory for entire IMAGE on DEVICE */
@@ -414,6 +419,8 @@ int main(int argc, char *argv [])
 	}
 
     mem_alloc_time = probe_time_end(&ts_memalloc);
+	CCA_MEMALLOC_STOP;
+	CCA_H_TO_D;
 
 	/*******************************************************
 	 * COPY DATA TO DEVICE 
@@ -469,7 +476,8 @@ int main(int argc, char *argv [])
 	}
 
     h2d_time = probe_time_end(&ts_h2d);
-
+	CCA_H_TO_D_STOP;
+	CCA_EXEC;
 	/*******************************************************
 	 * SCALE IMAGE DOWN FROM 0-255 TO 0-1 AND EXTRACT
 	 ******************************************************/
@@ -544,6 +552,7 @@ int main(int argc, char *argv [])
 
 		/* checkCUDAError("before copy sum"); */
         cuCtxSynchronize();
+
         kernel_time += probe_time_end(&ts_kernel);
 
 		/* copy total sums to HOST */
@@ -635,10 +644,13 @@ int main(int argc, char *argv [])
     cuCtxSynchronize();
     kernel_time += probe_time_end(&ts_kernel);
 
+	CCA_EXEC_STOP;
+	CCA_D_TO_H;
 	/*******************************************************
 	 * COPY RESULTS BACK TO CPU
 	 ******************************************************/
     probe_time_start(&ts_d2h);
+
 
 	res = cuMemcpyDtoH(image, d_I, mem_size);
 	if (res != CUDA_SUCCESS) {
@@ -649,6 +661,8 @@ int main(int argc, char *argv [])
 	//cuCtxSynchronize();
     d2h_time += probe_time_end(&ts_d2h);
 
+	CCA_D_TO_H_STOP;
+	CCA_CLOSE;
 	/*******************************************************
 	 * CLEAN UP GPU
 	 ******************************************************/
@@ -676,6 +690,9 @@ int main(int argc, char *argv [])
 
     close_time = probe_time_end(&ts_close);
 	total_time = probe_time_end(&ts_total);
+
+	CCA_CLOSE_STOP;
+	CCA_BENCHMARK_STOP;
 
     printf("Init: %f\n", init_time);
 	printf("MemAlloc: %f\n", mem_alloc_time);

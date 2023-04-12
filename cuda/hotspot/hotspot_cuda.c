@@ -169,6 +169,7 @@ void usage(int argc, char **argv)
 
 int main(int argc, char** argv)
 {
+    CCA_BENCHMARK_INIT;
     run(argc,argv);
 
     return EXIT_SUCCESS;
@@ -230,6 +231,8 @@ void run(int argc, char** argv)
 	/*
 	 * call our common CUDA initialization utility function.
 	 */
+    CCA_BENCHMARK_START;
+    CCA_INIT;
 	gettimeofday(&tv_total_start, NULL);
 	res = cuda_driver_api_init(&ctx, &mod, "./hotspot.cubin");
 	if (res != CUDA_SUCCESS) {
@@ -237,6 +240,8 @@ void run(int argc, char** argv)
 		return;
 	}
 
+    CCA_INIT_STOP;
+    CCA_MEMALLOC;
     gettimeofday(&tv_mem_alloc_start, NULL);
 	tvsub(&tv_mem_alloc_start, &tv_total_start, &tv);
 	init_gpu = tv.tv_sec * 1000.0 + (float) tv.tv_usec / 1000.0;
@@ -257,6 +262,8 @@ void run(int argc, char** argv)
 		return;
 	}
 
+    CCA_MEMALLOC_STOP;
+    CCA_H_TO_D;
 	gettimeofday(&tv_h2d_start, NULL);
     tvsub(&tv_h2d_start, &tv_mem_alloc_start, &tv);
 	mem_alloc = tv.tv_sec * 1000.0 + (float) tv.tv_usec / 1000.0;
@@ -274,6 +281,8 @@ void run(int argc, char** argv)
 	gettimeofday(&tv_h2d_end, NULL);
 	tvsub(&tv_h2d_end, &tv_h2d_start, &tv);
 	h2d = tv.tv_sec * 1000.0 + (float) tv.tv_usec / 1000.0;
+    CCA_H_TO_D_STOP;
+    CCA_EXEC;
 
     ret = compute_tran_temp(mod, MatrixPower, MatrixTemp, grid_cols, grid_rows,
 							total_iterations, pyramid_height, 
@@ -281,8 +290,11 @@ void run(int argc, char** argv)
 
     cuCtxSynchronize();
     gettimeofday(&tv_exec_end, NULL);
+    CCA_EXEC_STOP;
+    CCA_D_TO_H;
     tvsub(&tv_exec_end, &tv_h2d_end, &tv);
     exec = tv.tv_sec * 1000.0 + (float) tv.tv_usec / 1000.0;
+
 
     res = cuMemcpyDtoH(MatrixOut, MatrixTemp[ret], sizeof(float) * size);
 	if (res != CUDA_SUCCESS) {
@@ -293,6 +305,8 @@ void run(int argc, char** argv)
 	gettimeofday(&tv_d2h_end, NULL);
     tvsub(&tv_d2h_end, &tv_exec_end, &tv);
 	d2h = tv.tv_sec * 1000.0 + (float) tv.tv_usec / 1000.0;
+    CCA_D_TO_H_STOP;
+    CCA_CLOSE;
 
     cuMemFree(MatrixPower);
     cuMemFree(MatrixTemp[0]);
@@ -307,6 +321,8 @@ void run(int argc, char** argv)
 	gettimeofday(&tv_total_end, NULL);
 	tvsub(&tv_total_end, &tv_d2h_end, &tv);
 	close_gpu = tv.tv_sec * 1000.0 + (float) tv.tv_usec / 1000.0;
+    CCA_CLOSE_STOP;
+    CCA_BENCHMARK_STOP;
 
 	tvsub(&tv_total_end, &tv_total_start, &tv);
 	total = tv.tv_sec * 1000.0 + (float) tv.tv_usec / 1000.0;

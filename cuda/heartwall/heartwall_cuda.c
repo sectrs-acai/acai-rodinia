@@ -73,6 +73,8 @@ int main(int argc, char *argv []){
 	//	VARIABLES
 	//=====================================================================
 
+	CCA_BENCHMARK_INIT;
+
 	// CUDA kernel execution parameters
 	int gdx, gdy, bdx, bdy;
 
@@ -94,6 +96,8 @@ int main(int argc, char *argv []){
 	// DRIVER INIT
 	//=====================================================================
 
+	CCA_BENCHMARK_START;
+	CCA_INIT;
     probe_time_start(&ts_total);
     probe_time_start(&ts_init);
 
@@ -104,6 +108,7 @@ int main(int argc, char *argv []){
 	}
 
     init_time = probe_time_end(&ts_init);
+
 
 	//=====================================================================
 	// 	FRAME
@@ -129,6 +134,8 @@ int main(int argc, char *argv []){
 	common.frame_elem = common.frame_rows * common.frame_cols;
 	common.frame_mem = sizeof(fp) * common.frame_elem;
 
+	CCA_INIT_STOP;
+	CCA_MEMALLOC;
     probe_time_start(&ts_memalloc);
 
 	// pointers
@@ -580,6 +587,8 @@ int main(int argc, char *argv []){
 	}
 
     mem_alloc_time = probe_time_end(&ts_memalloc);
+	CCA_MEMALLOC_STOP;
+	CCA_EXEC;
     probe_time_start(&ts_h2d);
 
 	//=====================================================================
@@ -607,6 +616,7 @@ int main(int argc, char *argv []){
 	cuMemcpyHtoD(d_unique, &unique, d_unique_size);
 
     h2d_time = probe_time_end(&ts_h2d);
+
 
 	//=====================================================================
 	//	KERNEL
@@ -692,7 +702,10 @@ int main(int argc, char *argv []){
 	cuMemcpyDtoH(common.tEpiColLoc, (CUdeviceptr)common.d_tEpiColLoc, common.epi_mem * common.no_frames);
 
     d2h_time += probe_time_end(&ts_d2h);
+	CCA_EXEC_STOP;
+	CCA_CLOSE;
     probe_time_start(&ts_close);
+
 
 	//=====================================================================
 	//	MEASUREMENT END
@@ -766,6 +779,8 @@ int main(int argc, char *argv []){
 		return -1;
 	}
 
+	CCA_CLOSE_STOP;
+	CCA_BENCHMARK_STOP;
     close_time += probe_time_end(&ts_close);
 	total_time = probe_time_end(&ts_total);
 

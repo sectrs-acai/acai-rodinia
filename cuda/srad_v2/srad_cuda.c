@@ -87,8 +87,8 @@ CUresult srad2_launch
 int 
 main( int argc, char** argv) 
 {
+	CCA_BENCHMARK_INIT;
     runTest( argc, argv);
-
     return EXIT_SUCCESS;
 }
 
@@ -173,7 +173,9 @@ runTest( int argc, char** argv)
 
 #ifdef GPU
 	/* call our common CUDA initialization utility function. */
-    probe_time_start(&ts_total);
+	CCA_BENCHMARK_START;
+	CCA_INIT;
+	probe_time_start(&ts_total);
     probe_time_start(&ts_init);
 
 	res = cuda_driver_api_init(&ctx, &mod, "./srad2.cubin");
@@ -183,7 +185,10 @@ runTest( int argc, char** argv)
 	}
 
     init_time = probe_time_end(&ts_init);
+	CCA_INIT_STOP;
+	CCA_MEMALLOC;
     probe_time_start(&ts_memalloc);
+
 
 	/* Allocate device memory */
 	res = cuMemAlloc(&J_cuda, sizeof(float) * size_I);
@@ -218,6 +223,7 @@ runTest( int argc, char** argv)
 	}
 
     mem_alloc_time = probe_time_end(&ts_memalloc);
+	CCA_MEMALLOC_STOP;;
 #endif 
 
 	printf("Randomizing the input matrix\n");
@@ -301,6 +307,7 @@ runTest( int argc, char** argv)
 		gdx = cols / bdx;
 		gdy = rows / bdy;
 
+		CCA_H_TO_D;
         probe_time_start(&ts_h2d);
 
 		/* Copy data from main memory to device memory */
@@ -311,6 +318,8 @@ runTest( int argc, char** argv)
 		}
 
         h2d_time += probe_time_end(&ts_h2d);
+		CCA_H_TO_D_STOP;
+		CCA_EXEC;
         probe_time_start(&ts_kernel);
 
 		/* Run kernels */
@@ -321,6 +330,8 @@ runTest( int argc, char** argv)
 
         cuCtxSynchronize();
         kernel_time += probe_time_end(&ts_kernel);
+		CCA_EXEC_STOP;
+		CCA_D_TO_H;
 
         probe_time_start(&ts_d2h);
 		/* Copy data from device memory to main memory */
@@ -330,6 +341,7 @@ runTest( int argc, char** argv)
 			return ;
 		}
         d2h_time += probe_time_end(&ts_d2h);
+		CCA_D_TO_H_STOP;
 #endif
 	}
 
@@ -354,6 +366,7 @@ runTest( int argc, char** argv)
 #endif
 #ifdef GPU
     probe_time_start(&ts_close);
+	CCA_CLOSE;
 
 	cuMemFree(C_cuda);
 	cuMemFree(J_cuda);
@@ -369,6 +382,8 @@ runTest( int argc, char** argv)
 
     close_time = probe_time_end(&ts_close);
 	total_time = probe_time_end(&ts_total);
+	CCA_CLOSE_STOP;
+	CCA_BENCHMARK_STOP;
 
     printf("Init: %f\n", init_time);
 	printf("MemAlloc: %f\n", mem_alloc_time);

@@ -1,2 +1,6 @@
+set +x
 # ./gaussian -q ../../data/gaussian/matrix208.txt
-./gaussian -s 1675 -q
+
+arg=1675
+echo "gaussian-$arg" > /mnt/host/fvp-trace || true
+./gaussian -s $arg -q

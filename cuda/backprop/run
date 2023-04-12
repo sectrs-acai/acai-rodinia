@@ -1,7 +1,9 @@
-#./backprop 65536
-# 262144
-# 229376
+set +x
+#arg=65536
+#arg=262144
+#arg=229376
+#arg=196608
+arg=262144
 
-# ./backprop 196608
-
-./backprop 262144
+echo "backprop-$arg" > /mnt/host/fvp-trace || true
+./backprop $arg

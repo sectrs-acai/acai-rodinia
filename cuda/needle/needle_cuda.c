@@ -5,6 +5,7 @@
 #include <math.h>
 #include <cuda.h>
 #include <sys/time.h>
+#include "util.h"
 
 #include "needle_cuda.h"
 #include "util.h"
@@ -51,6 +52,7 @@ float init_time = 0, mem_alloc_time = 0, h2d_time = 0, kernel_time = 0,
 int
 main( int argc, char** argv) 
 {
+    CCA_BENCHMARK_INIT;
     int rt = runTest( argc, argv);
     if (rt < 0) return rt;
 
@@ -180,6 +182,8 @@ int runTest( int argc, char** argv)
     CUresult res;
     CUdeviceptr referrence_cuda, matrix_cuda, matrix_cuda_out;
 
+    CCA_BENCHMARK_START;
+    CCA_INIT;
     probe_time_start(&ts_total);
     probe_time_start(&ts_init);
     res = cuda_driver_api_init(&ctx, &mod, "./needle.cubin");
@@ -191,7 +195,10 @@ int runTest( int argc, char** argv)
     size = max_cols * max_rows;
 
     init_time = probe_time_end(&ts_init);
+    CCA_INIT_STOP;
+    CCA_MEMALLOC;
     probe_time_start(&ts_memalloc);
+
 
     /* Allocate device memory */
     res = cuMemAlloc(&referrence_cuda, sizeof(int) * size);
@@ -213,6 +220,8 @@ int runTest( int argc, char** argv)
     }
 
     mem_alloc_time = probe_time_end(&ts_memalloc);
+    CCA_MEMALLOC_STOP;
+    CCA_H_TO_D;
     probe_time_start(&ts_h2d);
 
     /* Copy data from main memory to device memory */
@@ -234,6 +243,8 @@ int runTest( int argc, char** argv)
 
 	printf("Processing top-left matrix\n");
 
+    CCA_H_TO_D_STOP;
+    CCA_EXEC;
     probe_time_start(&ts_kernel);
 
 	//process top-left matrix
@@ -250,6 +261,8 @@ int runTest( int argc, char** argv)
 
     cuCtxSynchronize();
     kernel_time = probe_time_end(&ts_kernel);
+    CCA_EXEC_STOP;
+    CCA_D_TO_H;
     probe_time_start(&ts_d2h);
 
     /* Copy data from device memory to main memory */
@@ -261,6 +274,8 @@ int runTest( int argc, char** argv)
 
     d2h_time += probe_time_end(&ts_d2h);
     probe_time_start(&ts_close);
+    CCA_D_TO_H_STOP;
+    CCA_CLOSE;
 
 	cuMemFree(referrence_cuda);
 	cuMemFree(matrix_cuda);
@@ -272,6 +287,8 @@ int runTest( int argc, char** argv)
 		return -1;
 	}
 
+    CCA_CLOSE_STOP;
+    CCA_BENCHMARK_STOP;
     close_time = probe_time_end(&ts_close);
 	total_time = probe_time_end(&ts_total);
 

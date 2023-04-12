@@ -12,3 +12,11 @@
 /tmp/
 /.idea/
 /cuda/backprop/backprop
+/cuda/bfs/bfs
+/cuda/heartwall/heartwall
+/cuda/hotspot/hotspot
+/cuda/needle/needle
+/cuda/nn/nn
+/cuda/pathfinder/pathfinder
+/cuda/srad_v1/srad
+/cuda/srad_v2/srad2

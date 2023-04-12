@@ -30,6 +30,7 @@ int pyramid_height;
 int main(int argc, char** argv)
 {
     int rt;
+    CCA_BENCHMARK_INIT;
     rt = run(argc,argv);
     if (rt < 0) return rt;
 
@@ -147,6 +148,8 @@ int run(int argc, char** argv)
     int size = rows*cols;
 
     /* call our common CUDA initialization utility function. */
+    CCA_BENCHMARK_START;
+    CCA_INIT;
     probe_time_start(&ts_total);
     probe_time_start(&ts_init);
     res = cuda_driver_api_init(&ctx, &mod, "./pathfinder.cubin");
@@ -155,6 +158,8 @@ int run(int argc, char** argv)
         return -1;
     }
     init_time = probe_time_end(&ts_init);
+    CCA_INIT_STOP;
+    CCA_MEMALLOC;
 
     probe_time_start(&ts_memalloc);
     res = cuMemAlloc(&gpuResult[0], sizeof(int) * cols);
@@ -174,6 +179,8 @@ int run(int argc, char** argv)
         return -1;
     }
     mem_alloc_time = probe_time_end(&ts_memalloc);
+    CCA_MEMALLOC_STOP;
+    CCA_H_TO_D;
 
     probe_time_start(&ts_h2d);
     res = cuMemcpyHtoD(gpuResult[0], data, sizeof(int) * cols);
@@ -188,12 +195,16 @@ int run(int argc, char** argv)
         return -1;
     }
     h2d_time = probe_time_end(&ts_h2d);
+    CCA_H_TO_D_STOP;
+    CCA_EXEC;
 
     int final_ret;
     probe_time_start(&ts_kernel);
     final_ret = calc_path(mod, gpuWall, gpuResult, rows, cols, pyramid_height, blockCols, borderCols);
     cuCtxSynchronize();
     kernel_time = probe_time_end(&ts_kernel);
+    CCA_EXEC_STOP;
+    CCA_D_TO_H;
 
     /* Copy data from device memory to main memory */
     probe_time_start(&ts_d2h);
@@ -203,6 +214,8 @@ int run(int argc, char** argv)
         return -1;
     }
     d2h_time += probe_time_end(&ts_d2h);
+    CCA_D_TO_H_STOP;
+    CCA_CLOSE;
 
     probe_time_start(&ts_close);
     cuMemFree(gpuWall);
@@ -217,6 +230,8 @@ int run(int argc, char** argv)
 
     close_time = probe_time_end(&ts_close);
 	total_time = probe_time_end(&ts_total);
+    CCA_CLOSE_STOP;
+    CCA_BENCHMARK_STOP;
 
     printf("Init: %f\n", init_time);
 	printf("MemAlloc: %f\n", mem_alloc_time);

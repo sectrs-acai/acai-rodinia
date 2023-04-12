@@ -27,6 +27,8 @@
 #include "util.h" /* cuda_driver_api_{init,exit}() */
 #include "bfs.h"
 
+#include "cca_benchmark.h"
+
 int no_of_nodes;
 int edge_list_size;
 FILE *fp;
@@ -221,6 +223,8 @@ int BFSGraph(int argc, char** argv)
 	 */
     probe_time_start(&ts_total);
     probe_time_start(&ts_init);
+	CCA_BENCHMARK_START;
+	CCA_INIT;
 
 	res = cuda_driver_api_init(&ctx, &mod, "./bfs.cubin");
 	if (res != CUDA_SUCCESS) {
@@ -234,6 +238,8 @@ int BFSGraph(int argc, char** argv)
 	 * allocate device memory space
 	 */
     probe_time_start(&ts_memalloc);
+	CCA_INIT_STOP;
+	CCA_MEMALLOC;
 
 	res = cuMemAlloc(&d_graph_nodes, sizeof(struct Node) * no_of_nodes);
 	if (res != CUDA_SUCCESS) {
@@ -272,8 +278,12 @@ int BFSGraph(int argc, char** argv)
 		return -1;
 	}
 
+
+
     mem_alloc_time = probe_time_end(&ts_memalloc);
     probe_time_start(&ts_h2d);
+	CCA_MEMALLOC_STOP;
+	CCA_H_TO_D;
 
 	/* copy the node list to device memory */
 	res = cuMemcpyHtoD(d_graph_nodes, h_graph_nodes, sizeof(struct Node) * no_of_nodes);
@@ -311,6 +321,8 @@ int BFSGraph(int argc, char** argv)
 		return -1;
 	}
 
+	CCA_H_TO_D_STOP;
+	CCA_EXEC;
     h2d_time = probe_time_end(&ts_h2d);
 
 	/* we cannot use maximum thread number because of the virtualization
@@ -321,6 +333,8 @@ int BFSGraph(int argc, char** argv)
 
 	/* copy result from device to host */
     probe_time_start(&ts_d2h);
+	CCA_EXEC_STOP;
+	CCA_D_TO_H;
 
 	res = cuMemcpyDtoH(h_cost, d_cost, sizeof(int) * no_of_nodes);
 	if (res != CUDA_SUCCESS) {
@@ -330,6 +344,8 @@ int BFSGraph(int argc, char** argv)
 
     d2h_time += probe_time_end(&ts_d2h);
     probe_time_start(&ts_close);
+	CCA_D_TO_H_STOP;
+	CCA_CLOSE;
 
 	/* cleanup memory */
 	cuMemFree(d_graph_nodes);
@@ -348,6 +364,9 @@ int BFSGraph(int argc, char** argv)
 
     close_time = probe_time_end(&ts_close);
 	total_time = probe_time_end(&ts_total);
+
+	CCA_CLOSE_STOP;
+	CCA_BENCHMARK_STOP;
 
 	/* Store the result into a file */
 #if 0
@@ -381,6 +400,7 @@ int BFSGraph(int argc, char** argv)
 
 int main( int argc, char** argv) 
 {
+	CCA_BENCHMARK_INIT;
 	no_of_nodes = 0;
 	edge_list_size = 0;
 

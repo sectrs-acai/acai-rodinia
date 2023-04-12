@@ -7,6 +7,7 @@
 
 #include "util.h"
 #include "backprop.h"
+#include "cca_benchmark.h"
 
 struct timestamp ts_init, ts_total, ts_memalloc, ts_h2d, ts_d2h, ts_kernel, ts_close;
 float init_time = 0, mem_alloc_time = 0, h2d_time = 0, kernel_time = 0,
@@ -32,8 +33,9 @@ unsigned int num_blocks = 0;
 ////////////////////////////////////////////////////////////////////////////////
 // Program main
 ////////////////////////////////////////////////////////////////////////////////
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
+	CCA_BENCHMARK_INIT;
 	setup(argc, argv);
 
 	return 0;
@@ -150,13 +152,17 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
 	 */
     probe_time_start(&ts_total);
     probe_time_start(&ts_init);
+	CCA_BENCHMARK_START;
+	CCA_INIT;
+
 	res = cuda_driver_api_init(&ctx, &mod, "./backprop.cubin");
 	if (res != CUDA_SUCCESS) {
 		printf("cuda_driver_api_init failed: res = %u\n", res);
 		return ;
 	}
     init_time = probe_time_end(&ts_init);
-
+	CCA_INIT_STOP;
+	CCA_MEMALLOC;
 	/*
 	 * allocate device memory space
 	 */
@@ -192,6 +198,8 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
 		return ;
 	}
     mem_alloc_time = probe_time_end(&ts_memalloc);
+	CCA_MEMALLOC_STOP;
+
 #endif
 
 #ifdef CPU
@@ -200,9 +208,12 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
 #endif
 
 #ifdef GPU
+
 	printf("Performing GPU computation\n");
     //printf("in= %d, hid = %d, numblocks = %d\n", in, hid, num_blocks);
     probe_time_start(&ts_h2d);
+	CCA_H_TO_D;
+
 
 	res = cuMemcpyHtoD(input_cuda, net->input_units, (in + 1) * sizeof(float));
 	if (res != CUDA_SUCCESS) {
@@ -215,6 +226,8 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
 		return ;
 	}
     h2d_time = probe_time_end(&ts_h2d);
+	CCA_H_TO_D_STOP;
+	CCA_EXEC;
 
     probe_time_start(&ts_kernel);
 	res = bpnn_layerforward_launch(mod, input_cuda, output_hidden_cuda,
@@ -237,6 +250,8 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
 
     kernel_time = probe_time_end(&ts_kernel);
     probe_time_start(&ts_d2h);
+	CCA_EXEC_STOP;
+	CCA_D_TO_H;
 
 	res = cuMemcpyDtoH(partial_sum, hidden_partial_sum, num_blocks * WIDTH * sizeof(float));
 	if (res != CUDA_SUCCESS) {
@@ -298,6 +313,9 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
 
     kernel_time += probe_time_end(&ts_kernel);
     probe_time_start(&ts_d2h);
+	CCA_EXEC_STOP;
+	CCA_D_TO_H;
+
 
 	res = cuMemcpyDtoH(net->input_units, input_cuda, (in + 1) * sizeof(float));
 	if (res != CUDA_SUCCESS) {
@@ -312,6 +330,8 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
 	}
 
     d2h_time += probe_time_end(&ts_d2h);
+	CCA_D_TO_H_STOP;
+	CCA_CLOSE;
     probe_time_start(&ts_close);
 
 	cuMemFree(input_cuda);
@@ -327,6 +347,8 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
 		return ;
 	}
 
+	CCA_CLOSE_STOP;
+	CCA_BENCHMARK_STOP;
     close_time = probe_time_end(&ts_close);
 	total_time = probe_time_end(&ts_total);
 
