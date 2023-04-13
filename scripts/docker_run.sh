@@ -8,9 +8,16 @@ CMD="$@"
 SOURCE=$SCRIPT_DIR/..
 
 if [ -z "$CMD" ]; then
-    printf "%s\n" "No command given. Aborting. E.g. call $0 /bin/bash"
+    printf "%s\n" "No command given. Aborting. E.g. call $0 /bin/bash [ mount dir ]"
     exit 1
 fi
+CMD=$1
+
+if [ $# -ge 2 ]; then
+SOURCE=$(realpath $2)
+fi
+
+
 
 if [[ "$(docker images -q $CONTAINER_NAME 2> /dev/null)" == "" ]]; then
   printf "%s\n" "$CONTAINER_NAME does not exist. Running ./docker_build.sh first"
