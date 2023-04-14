@@ -8,6 +8,7 @@ extern "C" {
 #endif
 #include "util.h"
 
+
 CUresult cuda_driver_api_init(CUcontext *pctx, CUmodule *pmod, const char *f)
 {
 	CUresult res;
@@ -38,7 +39,20 @@ CUresult cuda_driver_api_init(CUcontext *pctx, CUmodule *pmod, const char *f)
 		return res;
 	}
 
-	return CUDA_SUCCESS;
+    /* load encryption */
+    #ifdef ENC_CUDA
+    {
+        char static_key[] = "0123456789abcdeF0123456789abcdeF";
+        char static_iv[] = "12345678876543211234567887654321";
+        CUresult ret = cuda_enc_setup(static_key, static_iv);
+        if (ret != CUDA_SUCCESS) {
+          fprintf(stderr, "cuda_enc_setup failed\n");
+          return ret;
+        }
+  }
+    #endif
+
+    return CUDA_SUCCESS;
 }
 
 CUresult cuda_driver_api_exit(CUcontext ctx, CUmodule mod)
