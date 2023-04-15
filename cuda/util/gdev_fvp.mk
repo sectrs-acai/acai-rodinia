@@ -5,15 +5,33 @@ NVCC = nvcc
 NVCCFLAGS += -O3 \
 	-use_fast_math \
 	-arch sm_20 \
-	-cubin 
+	-cubin
 
-# -L/home/armcca/trusted-peripherals/assets/snapshots/aarch64-lib
+# staging_dir is build directory of buildroot
+# run this sourced in buildroot env!
 CFLAGS += -I$(CUDA_TOP_DIR)/util \
 	-I$(STAGING_DIR)/usr/local/gdev/include \
-    -L$(STAGING_DIR)/usr/local/gdev/lib64 \
-    -lucuda -lgdev \
+	-L$(STAGING_DIR)/usr/local/gdev/lib64 \
+	-L$(STAGING_DIR)/usr/lib  \
+    -I$(STAGING_DIR)/usr/include \
 	-O3 \
-	-Wall \
+	-Wall
+
+define n
+
+==========================
+
+endef
+
+ifndef ENC_CUDA
+CFLAGS += -lucuda -lgdev
+
+$(warning $n ENC_CUDA not set, compiling without enc cuda $n)
+else
+CFLAGS += -lenccuda  -lucuda -lgdev -DENC_CUDA
+$(warning $n ENC_CUDA is set $n)
+endif
+
 
 CCFILES += $(CUDA_TOP_DIR)/util/util.c
 
@@ -26,4 +44,7 @@ gcc:
 nvcc:
 	$(NVCC) -o $(EXECUTABLE).cubin $(NVCCFLAGS) $(CUFILES)
 clean:
-	rm -f $(EXECUTABLE) $(EXECUTABLE).cubin *~
+	rm -f $(EXECUTABLE)  *~
+
+clean-cubin:
+	rm -f *~$(EXECUTABLE).cubin

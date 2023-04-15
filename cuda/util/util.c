@@ -59,6 +59,17 @@ CUresult cuda_driver_api_exit(CUcontext ctx, CUmodule mod)
 {
 	CUresult res;
 
+    /* unload encryption */
+    #ifdef ENC_CUDA
+    {
+        CUresult ret = cuda_enc_release();
+        if (ret != CUDA_SUCCESS) {
+          fprintf(stderr, "cuda_enc_release failed\n");
+          return ret;
+        }
+  }
+    #endif
+
 	res = cuModuleUnload(mod);
 	if (res != CUDA_SUCCESS) {
 		printf("cuModuleUnload failed: res = %lu\n", (unsigned long)res);

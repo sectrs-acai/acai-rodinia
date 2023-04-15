@@ -13,9 +13,18 @@ NVCCFLAGS += -O3 \
 CFLAGS += -I$(CUDA_TOP_DIR)/util \
 	-I$(STAGING_DIR)/usr/local/gdev/include \
 	-L$(STAGING_DIR)/usr/local/gdev/lib64 \
-	-lucuda -lgdev \
+	-L$(STAGING_DIR)/usr/lib  \
+    -I$(STAGING_DIR)/usr/include \
 	-O3 \
-	-Wall \
+	-Wall
+
+ifndef ENC_CUDA
+	CFLAGS += -lucuda -lgdev
+	$(warning "ENC_CUDA not set, compiling without enc cuda")
+else
+	CFLAGS += -lenccuda  -lucuda -lgdev -DENC_CUDA
+	$(warning "ENC_CUDA IS set")
+endif
 
 CCFILES += $(CUDA_TOP_DIR)/util/util.c
 

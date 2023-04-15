@@ -32,20 +32,24 @@
 
 
 #define CCA_BENCHMARK_START                                                    \
-  CCA_TRACE_START; \
+  CCA_TRACE_START;                                                             \
+  CCA_FLUSH;                                                                             \
   CCA_MARKER(0x1)
 
 #define CCA_BENCHMARK_STOP                                                     \
-  CCA_MARKER(0x2); \
+  CCA_MARKER(0x2);                                                             \
+  CCA_FLUSH;                                                                             \
   CCA_TRACE_STOP
 
 
 #if defined(__x86_64__) || defined(_M_X64)
+#define CCA_FLUSH
 #define CCA_BENCHMARK_INIT
 #define CCA_TRACE_START
 #define CCA_TRACE_STOP
 
 #else
+#define CCA_FLUSH __asm__ volatile("ISB");
 #define CCA_TRACE_START __asm__ volatile("HLT 0x1337");
 #define CCA_TRACE_STOP __asm__ volatile("HLT 0x1337");
 

@@ -34,8 +34,10 @@ else
    DISPLAY_CMD="-e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix"
 fi
 
-docker run --rm --env UID=$(id -u) \
-        --env GID=$(id -g)  -i -t \
+
+# XXX: mount /etc/passwd and /etc/group ro! to docker to fix permission issues
+docker run --rm  -i -t \
+        -u $(id -u $USER):$(id -g $USER) \
 	   $DISPLAY_CMD \
 	   --network host --security-opt label=disable \
 	   --mount "type=bind,source=$SOURCE,target=/armcca" \

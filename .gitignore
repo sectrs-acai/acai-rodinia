@@ -20,3 +20,5 @@
 /cuda/pathfinder/pathfinder
 /cuda/srad_v1/srad
 /cuda/srad_v2/srad2
+/cuda/gaussian/Makefile_enccuda
+/test-gdev/cuda/user/madd/Makefile.fvp_enc
