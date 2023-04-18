@@ -32,6 +32,10 @@ CFLAGS += -lenccuda  -lucuda -lgdev -DENC_CUDA
 $(warning $n ENC_CUDA is set $n)
 endif
 
+ifdef CCA_NO_BENCH
+CFLAGS += -DCCA_NO_BENCH
+$(warning $n DCCA_NO_BENCH is set $n)
+endif
 
 CCFILES += $(CUDA_TOP_DIR)/util/util.c
 

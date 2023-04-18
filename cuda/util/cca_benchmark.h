@@ -30,8 +30,13 @@
 #define CCA_D_TO_H CCA_MARKER(0x101A)
 #define CCA_D_TO_H_STOP CCA_MARKER(0x101B)
 
-
-#define CCA_BENCHMARK_START                                                    \
+#ifdef CCA_NO_BENCH
+#define IS_CCA_NO_BENCH 1
+#define CCA_BENCHMARK_START
+#define CCA_BENCHMARK_STOP
+#else
+#define IS_CCA_NO_BENCH 0
+#define CCA_BENCHMARK_START                                             \
   CCA_TRACE_START;                                                             \
   CCA_FLUSH;                                                                             \
   CCA_MARKER(0x1)
@@ -40,6 +45,8 @@
   CCA_MARKER(0x2);                                                             \
   CCA_FLUSH;                                                                             \
   CCA_TRACE_STOP
+#endif
+
 
 
 #if defined(__x86_64__) || defined(_M_X64)
@@ -62,9 +69,17 @@ static void __cca_sighandler(int signo, siginfo_t *si, void *data) {
   uc->uc_mcontext.pc += 4;
 }
 
+#ifdef ENC_CUDA
+#define IS_ENC_CUDA 1
+#else
+#define IS_ENC_CUDA 0
+#endif
+
 #define CCA_BENCHMARK_INIT                                                     \
-  {                                                                            \
-    struct sigaction sa, osa;                                                  \
+  {                                                                          \
+    printf("enc_cuda: %d\n", IS_ENC_CUDA);                                      \
+    printf("cca is no bench: %d\n", IS_CCA_NO_BENCH);                        \
+    struct sigaction sa, osa;                                                   \
     sa.sa_flags = SA_ONSTACK | SA_RESTART | SA_SIGINFO;                        \
     sa.sa_sigaction = __cca_sighandler;                                        \
     sigaction(SIGILL, &sa, &osa);                                              \
