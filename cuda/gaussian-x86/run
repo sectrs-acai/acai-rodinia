@@ -1,2 +1,0 @@
-#LD_LIBRARY_PATH=/usr/local/gdev/lib64 ./gaussian ../../data/gaussian/matrix1024.txt
-LD_LIBRARY_PATH=/usr/local/gdev/lib64 ./gaussian -s 1750 -q

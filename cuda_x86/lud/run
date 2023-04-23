@@ -1,0 +1,6 @@
+#cuda/lud -i ../../data/lud/256.dat -c cuda/lud.cubin
+
+set +x
+arg=2048
+echo "lud-$arg" > /mnt/host/fvp-trace || true
+cd cuda; ./lud -s $arg -c lud.cubin

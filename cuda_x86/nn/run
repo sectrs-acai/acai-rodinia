@@ -1,0 +1,11 @@
+#!/bin/sh
+set +x
+
+if [ -z "$DATA_DIR" ]
+then
+    DATA_DIR=../../data/
+fi
+
+echo "nn-filelist_4" > /mnt/host/fvp-trace || true
+
+./nn filelist_4 -r 5 -lat 30 -lng 90 -f ${DATA_DIR}

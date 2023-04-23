@@ -15,7 +15,7 @@ CFLAGS += -I$(CUDA_TOP_DIR)/util \
 	-L$(STAGING_DIR)/usr/lib  \
     -I$(STAGING_DIR)/usr/include \
 	-O3 \
-	-Wall
+	-Wall -Wno-misleading-indentation
 
 define n
 

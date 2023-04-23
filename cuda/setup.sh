@@ -2,47 +2,20 @@
 #
 set -euo pipefail
 
-b_fvp=( \
-    "backprop" \
-    "bfs" \
-    "gaussian" \
-    "heartwall" \
-    "hotspot" \
-    "lud" \
-    "needle" \
-    "nn" \
-    "pathfinder" \
-    "srad_v1" \
-    "srad_v2"\
-    )
+b_fvp=(
+  "srad_v1"
+  "backprop" \
+  "bfs" \
+  "gaussian" \
+  "heartwall" \
+  "hotspot" \
+  "needle" \
+  "nn" \
+  "pathfinder" \
+  "srad_v2"\
+  )
 
-b_x86=( \
-"backprop-x86" \
-    "bfs-x86" \
-    "gaussian-x86" \
-    "heartwall-x86" \
-    "hotspot-x86" \
-    "lud-x86" \
-    "needle-x86" \
-    "nn-x86" \
-    "pathfinder-x86" \
-    "srad_v1-x86" \
-    "srad_v2-x86" )
-
-
-b_fvp_ok=("backprop" \
-        "bfs" \
-        "gaussian" \
-        "heartwall" \
-        "needle" \
-        "nn" \
-        "pathfinder" \
-        "srad_v1" \
-        "srad_v2" )
-
-
-
-BENCH_OUT_DIR=/tmp/benchmark-single
+BENCH_OUT_DIR=/mnt/host/mnt/host/benchmark-single
 
 function do_run_fvp_single {
     SCRIPT_DIR=${0:a:h}
@@ -50,14 +23,17 @@ function do_run_fvp_single {
     DIR=$BENCH_OUT_DIR/$TS
     mkdir -p $DIR
     set +x
+    num=10
 
     for b in ${b_fvp_ok[@]}; do
-        LOG=$DIR/$b
-        echo "executing $b"
+        for i in {1..$num}; do
+            LOG=$DIR/$b
+            echo "executing $b"
 
-        cd $SCRIPT_DIR/$b
-        cat ./run | tee -a $LOG
-        LD_LIBRARY_PATH=/mnt/mnt/host/assets/snapshots/aarch64-lib/ exec ./run 2>&1 | tee -a $LOG
+            cd $SCRIPT_DIR/$b
+            cat ./run | tee -a $LOG
+            exec ./run 2>&1 | tee -a $LOG
+        done
     done
 }
 
@@ -83,9 +59,21 @@ function do_gcc {
     done
 }
 
+function do_clean {
+    # must be executed with bash
+    HERE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+    set +x
+    for b in ${b_fvp[@]}; do
+        cd $HERE_DIR/$b && make clean && cd $HERE_DIR
+    done
+}
+
 case "$1" in
     nvcc)
         do_nvcc
+    ;;
+    clean)
+        do_clean
     ;;
     gcc)
         do_gcc

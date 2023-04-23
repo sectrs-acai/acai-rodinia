@@ -22,3 +22,5 @@
 /cuda/srad_v2/srad2
 /cuda/gaussian/Makefile_enccuda
 /test-gdev/cuda/user/madd/Makefile.fvp_enc
+/cuda/gaussian/devmem_intercept
+/test-gdev/cuda/user/madd/install_enc_cuda/
