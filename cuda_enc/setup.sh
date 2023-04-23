@@ -31,16 +31,15 @@ b_x86=( \
 
 
 #"gaussian" \
+#"nn" \
+# "heartwall" \
 b_fvp_ok=("srad_v1" \
-"backprop" \
-"bfs" \
-        "heartwall" \
+        "backprop" \
+        "bfs" \
         "needle" \
-        "nn" \
         "pathfinder" \
-          "srad_v2"
+         "srad_v2"
          )
-
 
 
 BENCH_OUT_DIR=/mnt/host/mnt/host/benchmark-single
@@ -50,15 +49,18 @@ function do_run {
     TS=$(date +"%Y-%m-%d_%H-%M-%S")
     DIR=$BENCH_OUT_DIR/$TS
     mkdir -p $DIR
+    num=3
     set +x
 
     for b in ${b_fvp_ok[@]}; do
-        LOG=$DIR/$b
-        echo "executing $b"
+        for i in {1..$num}; do
+            LOG=$DIR/$b
+            echo "executing $b"
 
-        cd $SCRIPT_DIR/$b
-        cat ./run | tee -a $LOG
-        exec ./run 2>&1 | tee -a $LOG
+            cd $SCRIPT_DIR/$b
+            cat ./run | tee -a $LOG
+            exec ./run 2>&1 | tee -a $LOG
+        done
     done
 }
 

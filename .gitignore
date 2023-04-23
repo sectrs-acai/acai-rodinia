@@ -24,3 +24,12 @@
 /test-gdev/cuda/user/madd/Makefile.fvp_enc
 /cuda/gaussian/devmem_intercept
 /test-gdev/cuda/user/madd/install_enc_cuda/
+/cuda_enc/backprop/backprop
+/cuda_enc/bfs/bfs
+/cuda_enc/heartwall/heartwall
+/cuda_enc/hotspot/hotspot
+/cuda_enc/lud/cuda/lud
+/cuda_enc/needle/needle
+/cuda_enc/pathfinder/pathfinder
+/cuda_enc/srad_v1/srad
+/cuda_enc/srad_v2/srad2
