@@ -26,7 +26,7 @@ CUresult cuda_driver_api_init(CUcontext *pctx, CUmodule *pmod, const char *f)
 		return res;
 	}
 
-	res = cuCtxCreate(pctx, 0, dev);
+	res = cuCtxCreate(pctx, CU_CTX_SCHED_BLOCKING_SYNC, dev);
 	if (res != CUDA_SUCCESS) {
 		printf("cuCtxCreate failed: res = %lu\n", (unsigned long)res);
 		return res;

@@ -14,4 +14,4 @@ CCFILES		:= pathfinder_cuda.c
 # init C flags (more options will be added)
 CFLAGS		:= -lm
 
-include ../util/gdev_fvp.mk
+include ../util/gdev.mk

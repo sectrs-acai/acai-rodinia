@@ -14,4 +14,4 @@ CCFILES		:= backprop_cuda.c backprop.c facetrain.c imagenet.c
 # init C flags (more options will be added)
 CFLAGS		:= -lm
 
-include ../util/gdev_fvp.mk
+include ../util/gdev.mk

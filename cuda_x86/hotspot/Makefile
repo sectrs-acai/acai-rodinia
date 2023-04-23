@@ -15,4 +15,4 @@ CCFILES		:= hotspot_cuda.c
 CFLAGS		:= -lm
 # use g++ instead of gcc
 
-include ../util/gdev_fvp.mk
+include ../util/gdev.mk

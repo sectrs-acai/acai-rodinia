@@ -15,4 +15,4 @@ CCFILES		:= gaussian_cuda.c
 CFLAGS		:= -lm
 
 # include ../util/nvidia.mk
-include ../util/gdev_fvp.mk
+include ../util/gdev.mk

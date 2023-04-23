@@ -52,7 +52,7 @@ function do_nvcc {
 function do_gcc {
     # must be executed with bash
     HERE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-    source $HERE_DIR/../../../../scripts/env-aarch64.sh
+    # source $HERE_DIR/../../../../scripts/env-x86.sh
     set +x
     for b in ${b_fvp[@]}; do
         cd $HERE_DIR/$b && make gcc && cd $HERE_DIR
