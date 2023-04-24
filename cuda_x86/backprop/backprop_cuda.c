@@ -250,8 +250,6 @@ void bpnn_train_cuda(BPNN *net, float *eo, float *eh)
 
     kernel_time = probe_time_end(&ts_kernel);
     probe_time_start(&ts_d2h);
-	CCA_EXEC_STOP;
-	CCA_D_TO_H;
 
 	res = cuMemcpyDtoH(partial_sum, hidden_partial_sum, num_blocks * WIDTH * sizeof(float));
 	if (res != CUDA_SUCCESS) {

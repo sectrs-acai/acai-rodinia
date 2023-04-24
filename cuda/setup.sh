@@ -2,30 +2,30 @@
 #
 set -euo pipefail
 
+#   "gaussian" \
 b_fvp=(
   "srad_v1"
   "backprop" \
   "bfs" \
-  "gaussian" \
-  "heartwall" \
-  "hotspot" \
   "needle" \
   "nn" \
+  "heartwall" \
+  "hotspot" \
   "pathfinder" \
   "srad_v2"\
   )
 
 BENCH_OUT_DIR=/mnt/host/mnt/host/benchmark-single
 
-function do_run_fvp_single {
+function do_run {
     SCRIPT_DIR=${0:a:h}
     TS=$(date +"%Y-%m-%d_%H-%M-%S")
     DIR=$BENCH_OUT_DIR/$TS
     mkdir -p $DIR
     set +x
-    num=10
+    num=1
 
-    for b in ${b_fvp_ok[@]}; do
+    for b in ${b_fvp[@]}; do
         for i in {1..$num}; do
             LOG=$DIR/$b
             echo "executing $b"
@@ -78,8 +78,8 @@ case "$1" in
     gcc)
         do_gcc
     ;;
-    fvp-single)
-        do_run_fvp_single
+    run)
+        do_run
         ;;
     *)
         echo "unknown"

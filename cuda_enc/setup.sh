@@ -33,12 +33,13 @@ b_x86=( \
 #"gaussian" \
 #"nn" \
 # "heartwall" \
-b_fvp_ok=("srad_v1" \
+b_fvp_ok=(
+    "srad_v1" \
         "backprop" \
         "bfs" \
         "needle" \
+        "srad_v2"
         "pathfinder" \
-         "srad_v2"
          )
 
 
@@ -49,7 +50,7 @@ function do_run {
     TS=$(date +"%Y-%m-%d_%H-%M-%S")
     DIR=$BENCH_OUT_DIR/$TS
     mkdir -p $DIR
-    num=3
+    num=1
     set +x
 
     for b in ${b_fvp_ok[@]}; do
