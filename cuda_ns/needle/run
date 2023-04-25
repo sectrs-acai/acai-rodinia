@@ -1,0 +1,5 @@
+set +x
+arg=1840
+
+echo "needle-$arg" > /mnt/host/fvp-trace || true
+nice -20 taskset 0x4 ./needle $arg 10

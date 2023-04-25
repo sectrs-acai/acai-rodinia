@@ -1,0 +1,6 @@
+set -x
+arg="graph65536.txt"
+# arg="graph4096.txt"
+
+echo "bfs-$arg" > /mnt/host/fvp-trace || true
+nice -20 taskset 0x4  ./bfs ./$arg

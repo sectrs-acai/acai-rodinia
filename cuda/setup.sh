@@ -2,17 +2,19 @@
 #
 set -euo pipefail
 
-#   "gaussian" \
+
+#  "srad_v1"
+#  "backprop" \
+#  "bfs" \
+#  "needle" \
+#  "nn" \
+#  "heartwall" \
+#  "hotspot" \
+#  "pathfinder" \
+#  "srad_v2"\
 b_fvp=(
-  "srad_v1"
-  "backprop" \
-  "bfs" \
-  "needle" \
-  "nn" \
-  "heartwall" \
-  "hotspot" \
-  "pathfinder" \
-  "srad_v2"\
+   "nn" \
+   "gaussian"
   )
 
 BENCH_OUT_DIR=/mnt/host/mnt/host/benchmark-single
@@ -23,7 +25,7 @@ function do_run {
     DIR=$BENCH_OUT_DIR/$TS
     mkdir -p $DIR
     set +x
-    num=1
+    num=2
 
     for b in ${b_fvp[@]}; do
         for i in {1..$num}; do

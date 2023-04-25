@@ -1,0 +1,3 @@
+set +x
+echo "srad1-20-0.5-502-458" > /mnt/host/fvp-trace || true
+nice -20 taskset 0x4 ./srad 20 0.5 502 458

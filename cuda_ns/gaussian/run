@@ -1,0 +1,9 @@
+set -x
+# ./gaussian -q ../../data/gaussian/matrix208.txt
+
+# arg=1675 # crashes with enc
+arg=1575
+echo "gaussian-$arg" > /mnt/host/fvp-trace || true
+
+#core 3
+nice -20 taskset 0x4 ./gaussian -s $arg -q

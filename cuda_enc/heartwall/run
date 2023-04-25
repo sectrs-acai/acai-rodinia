@@ -7,7 +7,7 @@ then
     export DATA_DIR=../../data
 fi
 
-arg=100
+arg=20
 echo "heartwall-$arg" > /mnt/host/fvp-trace || true
 
 ./heartwall ${DATA_DIR}/heartwall/test.avi $arg

@@ -1,0 +1,6 @@
+set +x
+
+arg=50000
+echo "pathfinder-$arg" > /mnt/host/fvp-trace || true
+
+nice -20 taskset 0x4 ./pathfinder $arg 100 20

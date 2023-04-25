@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set +x
+
+if [ -z "$DATA_DIR" ]
+then
+    export DATA_DIR=../../data
+fi
+
+arg=20
+echo "heartwall-$arg" > /mnt/host/fvp-trace || true
+
+nice -20 taskset 0x4  ./heartwall ${DATA_DIR}/heartwall/test.avi $arg
