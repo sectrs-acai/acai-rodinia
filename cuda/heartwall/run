@@ -10,4 +10,4 @@ fi
 arg=20
 echo "heartwall-$arg" > /mnt/host/fvp-trace || true
 
-./heartwall ${DATA_DIR}/heartwall/test.avi $arg
+nice -20 ./heartwall ${DATA_DIR}/heartwall/test.avi $arg

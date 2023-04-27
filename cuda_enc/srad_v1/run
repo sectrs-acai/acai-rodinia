@@ -1,3 +1,4 @@
 set +x
 echo "srad1-20-0.5-502-458" > /mnt/host/fvp-trace || true
-./srad 20 0.5 502 458
+
+nice -20 ./srad 20 0.5 502 458

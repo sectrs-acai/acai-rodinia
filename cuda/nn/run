@@ -8,4 +8,4 @@ fi
 
 echo "nn-filelist_4" > /mnt/host/fvp-trace || true
 
-./nn filelist_4 -r 5 -lat 30 -lng 90 -f ${DATA_DIR}
+nice -20 ./nn filelist_4 -r 5 -lat 30 -lng 90 -f ${DATA_DIR}

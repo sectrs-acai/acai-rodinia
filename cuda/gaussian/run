@@ -6,4 +6,5 @@ arg=1575
 #arg=100
 #arg=
 echo "gaussian-$arg" > /mnt/host/fvp-trace || true
-./gaussian -s $arg -q
+
+nice -20 ./gaussian -s $arg -q

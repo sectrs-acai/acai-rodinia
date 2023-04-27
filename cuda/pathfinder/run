@@ -3,4 +3,4 @@ set +x
 arg=50000
 echo "pathfinder-$arg" > /mnt/host/fvp-trace || true
 
-./pathfinder $arg 100 20
+nice -20 ./pathfinder $arg 100 20

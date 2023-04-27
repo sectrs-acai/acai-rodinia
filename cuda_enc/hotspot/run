@@ -8,4 +8,5 @@ fi
 
 arg=512
 echo "hotspot-$arg" > /mnt/host/fvp-trace || true
-./hotspot $arg 2 10 ${DATA_DIR}/hotspot/temp_512 ${DATA_DIR}/hotspot/power_512 output.out
+
+nice -20 ./hotspot $arg 2 10 ${DATA_DIR}/hotspot/temp_512 ${DATA_DIR}/hotspot/power_512 output.out

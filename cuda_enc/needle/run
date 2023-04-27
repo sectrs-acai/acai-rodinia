@@ -2,4 +2,5 @@ set +x
 arg=1840
 
 echo "needle-$arg" > /mnt/host/fvp-trace || true
-./needle $arg 10
+
+nice -20 ./needle $arg 10

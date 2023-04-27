@@ -3,4 +3,4 @@ arg="graph65536.txt"
 # arg="graph4096.txt"
 
 echo "bfs-$arg" > /mnt/host/fvp-trace || true
-./bfs ./$arg
+nice -20 ./bfs ./$arg

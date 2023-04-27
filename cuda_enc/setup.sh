@@ -30,13 +30,19 @@ b_x86=( \
     "srad_v2-x86" )
 
 
-
  #"srad_v2" \
 b_fvp_ok=(
-   "hotspot" \
-  "pathfinder"
+       "srad_v1" \
+       "bfs" \
+       "nn" \
+       "backprop" \
+    "gaussian" \
+    "srad_v2"\
+     "needle" \
+  "hotspot" \
+  "pathfinder" \
+   "heartwall"
 )
-
 
 BENCH_OUT_DIR=/mnt/host/mnt/host/benchmark-single
 

@@ -6,4 +6,4 @@ set +x
 arg=262144
 
 echo "backprop-$arg" > /mnt/host/fvp-trace || true
-./backprop $arg
+nice -20 ./backprop $arg
