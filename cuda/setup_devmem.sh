@@ -1,28 +1,34 @@
 #!/bin/zsh
 #
 set -euo pipefail
-
-b_fvp=( \
-    "backprop" \
-    "bfs" \
-    "gaussian" \
-    "hotspot" \
-    "needle" \
-    "nn" \
-    "pathfinder" \
-    "srad_v1" \
-    "srad_v2"\
-    )
-
+#"sradv1"
+#"bfs" \
+#  "hotspot" \
+#  "backprop" \
+#  "needle" \
+#  "gaussian" \
+#  "srad_v2"\
+#  "pathfinder"
+b_fvp=(
+  "srad_v1" \
+  "nn" \
+  "bfs" \
+  "srad_v2" \
+  "hotspot" \
+  "backprop" \
+  "needle" \
+  "gaussian" \
+  "pathfinder"
+  )
 BENCH_OUT_DIR=/mnt/host/mnt/host/benchmark-single
-
 function do_run {
     SCRIPT_DIR=${0:a:h}
     TS=$(date +"%Y-%m-%d_%H-%M-%S")
     DIR=$BENCH_OUT_DIR/$TS
     mkdir -p $DIR
     set +x
-    num=1
+    num=3
+    DEVMEM_UNDELGATE=$SCRIPT_DIR/../../../../scripts/fvp/reset_devmem.sh
 
     for b in ${b_fvp[@]}; do
         for i in {1..$num}; do
@@ -32,6 +38,7 @@ function do_run {
             cd $SCRIPT_DIR/$b
             cat ./run | tee -a $LOG
             exec ./run 2>&1 | tee -a $LOG
+            sh $DEVMEM_UNDELGATE
         done
     done
 }
@@ -51,10 +58,10 @@ function do_nvcc {
 function do_gcc {
     # must be executed with bash
     HERE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-    # source $HERE_DIR/../../../../scripts/env-x86.sh
+    source $HERE_DIR/../../../../scripts/env-aarch64.sh
     set +x
     for b in ${b_fvp[@]}; do
-        cd $HERE_DIR/$b && make gcc ENC_CUDA=1 && cd $HERE_DIR
+        cd $HERE_DIR/$b && make gcc && cd $HERE_DIR
     done
 }
 
@@ -67,19 +74,18 @@ function do_clean {
     done
 }
 
-
 case "$1" in
     nvcc)
         do_nvcc
+    ;;
+    clean)
+        do_clean
     ;;
     gcc)
         do_gcc
     ;;
     run)
         do_run
-        ;;
-    clean)
-        do_clean
         ;;
     *)
         echo "unknown"

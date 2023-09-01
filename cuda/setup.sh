@@ -2,21 +2,17 @@
 #
 set -euo pipefail
 
-
-#  "srad_v1"
-#  "backprop" \
-#  "bfs" \
-#  "needle" \
-#  "nn" \
-#  "heartwall" \
-#  "hotspot" \
-#  "pathfinder" \
-#  "srad_v2"\
 b_fvp=(
-   "nn" \
-   "gaussian"
+  "bfs" \
+  "srad_v2" \      
+  "srad_v1" \
+  "nn" \
+  "hotspot" \
+  "backprop" \
+  "needle" \
+  "gaussian" \
+  "pathfinder" \
   )
-
 BENCH_OUT_DIR=/mnt/host/mnt/host/benchmark-single
 
 function do_run {
@@ -25,7 +21,7 @@ function do_run {
     DIR=$BENCH_OUT_DIR/$TS
     mkdir -p $DIR
     set +x
-    num=2
+    num=3
 
     for b in ${b_fvp[@]}; do
         for i in {1..$num}; do
@@ -40,13 +36,9 @@ function do_run {
 }
 
 function do_nvcc {
-    SCRIPT_DIR=${0:a:h}
+    SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
     set +x
     for b in ${b_fvp[@]}; do
-        cd $SCRIPT_DIR/$b && make nvcc && cd $SCRIPT_DIR
-    done
-
-    for b in ${b_x86[@]}; do
         cd $SCRIPT_DIR/$b && make nvcc && cd $SCRIPT_DIR
     done
 }

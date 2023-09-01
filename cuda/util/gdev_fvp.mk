@@ -1,6 +1,8 @@
 CROSS_COMPILE ?= aarch64-none-linux-gnu-
 CC ?= $(CROSS_COMPILE)gcc
-NVCC = nvcc
+
+# cuda sdk 5 requires gcc 4.4
+NVCC = nvcc -ccbin=gcc-4.4
 
 NVCCFLAGS += -O3 \
 	-use_fast_math \
@@ -12,6 +14,8 @@ NVCCFLAGS += -O3 \
 CFLAGS += -I$(CUDA_TOP_DIR)/util \
 	-I$(STAGING_DIR)/usr/local/gdev/include \
 	-L$(STAGING_DIR)/usr/local/gdev/lib64 \
+	-L$(STAGING_DIR)/usr/local/ucuda/lib64 \
+	-I$(STAGING_DIR)/usr/local/ucuda/include \
 	-L$(STAGING_DIR)/usr/lib  \
     -I$(STAGING_DIR)/usr/include \
 	-O3 \

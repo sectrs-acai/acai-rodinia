@@ -6,9 +6,7 @@ b_fvp=( \
     "backprop" \
     "bfs" \
     "gaussian" \
-    "heartwall" \
     "hotspot" \
-    "lud" \
     "needle" \
     "nn" \
     "pathfinder" \
@@ -17,7 +15,7 @@ b_fvp=( \
     )
 
 b_x86=( \
-"backprop-x86" \
+    "backprop-x86" \
     "bfs-x86" \
     "gaussian-x86" \
     "heartwall-x86" \
@@ -32,16 +30,15 @@ b_x86=( \
 
  #"srad_v2" \
 b_fvp_ok=(
-       "srad_v1" \
-       "bfs" \
-       "nn" \
-       "backprop" \
+    "srad_v1" \
+    "nn" \
+    "backprop" \
+    "bfs" \
     "gaussian" \
+    "hotspot" \
+    "needle" \
+    "pathfinder" \
     "srad_v2"\
-     "needle" \
-  "hotspot" \
-  "pathfinder" \
-   "heartwall"
 )
 
 BENCH_OUT_DIR=/mnt/host/mnt/host/benchmark-single
@@ -51,7 +48,7 @@ function do_run {
     TS=$(date +"%Y-%m-%d_%H-%M-%S")
     DIR=$BENCH_OUT_DIR/$TS
     mkdir -p $DIR
-    num=1
+    num=10
     set +x
 
     for b in ${b_fvp_ok[@]}; do

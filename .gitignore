@@ -33,3 +33,9 @@
 /cuda_enc/pathfinder/pathfinder
 /cuda_enc/srad_v1/srad
 /cuda_enc/srad_v2/srad2
+/cuda_enc/23-05-01-cuda-x86-run_4.txt
+/cuda_enc/23-05-01-cuda-x86-run_5.txt
+/cuda_enc/capture-cuda_no_enc.txt
+/cuda_x86/23-05-01-cuda-x86-run_enc_bean_1.txt
+/cuda_x86/23-05-01-cuda-x86-run_enc_bean_2.txt
+/cuda_x86/srad_v2/srad_cuda.mod.c
