@@ -1,19 +1,6 @@
-trusted-peripherals-rodinia:
-
 download rodinia data assets: ./download-assets.sh
-
-compile nvcc cubin (docker):
-   scripts/docker_build.sh
-   scripts/docker_run.sh /bin/bash
-   cd cuda && ./setup.sh nvcc
-
-compile aarch64 benchmarks (trusted-periph repo)
-   source trusted-periphs env-aarch.sh
-   cd benchmark/of/choise
-   make gcc # gcc is a target in every benchmark that uses cross compiler
-   
+  
 --------
-
 upstream: https://github.com/utcs-scea/rodinia-cudadrv
 upstream readme:
 
